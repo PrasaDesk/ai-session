@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>AI for Software Developers - Mindbowser</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root {
+        --mb-blue: #1164a9;
+        --mb-blue-dark: #0d4370;
+        --mb-orange: #ffae34;
+        --mb-gray: #97999b;
+        --mb-red: #ed232a;
+        --mb-bg: #f4f7fa;
+        --mb-dark: #111;
+        --mb-white: #fff;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--mb-dark);
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: var(--mb-bg);
+        overflow-x: hidden;
+        transition: background 0.5s;
+        position: relative;
+        height: 100%;
+      }
+      /* Background image and overlay */
+      body::before {
+        content: "";
+        position: fixed;
+        z-index: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100vw;
+        height: 100vh;
+        background: url("https://ewzduhvhjkj.exactdn.com/wp-content/uploads/2023/08/30165115/Office-Inaguration.jpg?strip=all&lossy=1&ssl=1")
+          center center / cover no-repeat;
+        filter: blur(0.5px) brightness(0.7);
+        opacity: 0.8;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.62);
+        pointer-events: none;
+        opacity: 1;
+      }
+      /* Content above overlay */
+      .logo {
+        position: fixed;
+        top: 18px;
+        left: 28px;
+        z-index: 102;
+        width: 180px;
+        height: auto;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 16px;
+        box-shadow: 0 2px 10px #0001;
+        padding: 8px 16px;
+        transition: opacity 0.3s;
+      }
+      .slides {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 80px 0 0 0;
+        list-style: none;
+        position: relative;
+        min-height: 80vh;
+        z-index: 10;
+      }
+      .slide {
+        display: none;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 24px;
+        margin: 0 12px 24px 12px;
+        box-shadow: 0 4px 32px #1164a93a;
+        padding: 56px 48px 56px 48px;
+        min-height: 540px;
+        position: relative;
+        animation: slideIn 0.9s cubic-bezier(0.44, 1.49, 0.44, 1.03);
+        border-top: 10px solid var(--mb-blue);
+        border-bottom: 6px solid var(--mb-orange);
+        z-index: 2;
+      }
+      .slide.active {
+        display: block;
+        animation: slideIn 0.7s cubic-bezier(0.44, 1.49, 0.44, 1.03);
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(40px) scale(0.97);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      h1,
+      h2,
+      h3 {
+        color: var(--mb-blue);
+        margin-bottom: 16px;
+        margin-top: 0;
+        letter-spacing: 1px;
+        z-index: 3;
+        position: relative;
+      }
+      h1 {
+        font-size: 2.8em;
+        font-weight: 900;
+      }
+      h2 {
+        font-size: 2em;
+        font-weight: 800;
+      }
+      h3 {
+        font-size: 1.2em;
+        font-weight: 700;
+      }
+      ul,
+      ol {
+        margin: 16px 0 0 30px;
+        font-size: 1.18em;
+        z-index: 3;
+        position: relative;
+      }
+      .footer {
+        position: absolute;
+        bottom: 28px;
+        left: 48px;
+        color: var(--mb-gray);
+        font-size: 1.04em;
+        font-weight: 600;
+        letter-spacing: 1px;
+        z-index: 3;
+      }
+      .controls {
+        position: fixed;
+        right: 36px;
+        bottom: 38px;
+        z-index: 103;
+        display: flex;
+        gap: 16px;
+      }
+      .controls button {
+        background: var(--mb-blue);
+        color: var(--mb-white);
+        border: none;
+        border-radius: 10px;
+        padding: 10px 18px;
+        font-size: 1em;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 2px 12px #1164a94a;
+        transition: background 0.2s, transform 0.15s;
+        z-index: 103;
+      }
+      .controls button:hover {
+        background: var(--mb-blue-dark);
+        color: var(--mb-orange);
+        transform: translateY(-2px) scale(1.04);
+      }
+      .slide .accent-bar {
+        height: 7px;
+        width: 80px;
+        background: linear-gradient(
+          90deg,
+          var(--mb-orange),
+          var(--mb-blue),
+          var(--mb-gray),
+          var(--mb-red)
+        );
+        border-radius: 2.5px;
+        margin-bottom: 32px;
+        margin-top: -10px;
+        margin-left: 0;
+        box-shadow: 0 2px 8px #ffae3422;
+        animation: accentBar 2s linear infinite alternate;
+        z-index: 3;
+        position: relative;
+      }
+      @keyframes accentBar {
+        from {
+          filter: brightness(1);
+        }
+        to {
+          filter: brightness(1.18);
+        }
+      }
+      .slide .icon-list li::marker {
+        color: var(--mb-blue);
+        font-size: 1.2em;
+        font-weight: bold;
+      }
+      .slide-important {
+        background: linear-gradient(100deg, #fff 80%, #ed232a22 100%);
+        border-top: 10px solid var(--mb-red) !important;
+        border-bottom: 6px solid var(--mb-blue) !important;
+      }
+      .slide .highlight {
+        color: var(--mb-orange);
+        font-weight: bold;
+      }
+      @media (max-width: 900px) {
+        .slides {
+          max-width: 99vw;
+        }
+        .slide {
+          padding: 26px 4vw 38px 4vw;
+          min-height: 400px;
+        }
+        .footer {
+          left: 4vw;
+        }
+      }
+      @media (max-width: 600px) {
+        .logo {
+          width: 120px;
+          padding: 3px 6px;
+        }
+        .slide {
+          padding: 14px 2vw 24px 2vw;
+          min-height: 320px;
+          border-radius: 14px;
+        }
+        h1 {
+          font-size: 1.5em;
+        }
+        h2 {
+          font-size: 1.22em;
+        }
+        ul,
+        ol {
+          font-size: 0.97em;
+        }
+        .footer {
+          left: 2vw;
+          font-size: 0.9em;
+        }
+        .controls button {
+          padding: 4px 7px;
+          font-size: 0.8em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mindbowser Logo -->
+    <img
+      class="logo"
+      src="https://s3.us-west-1.amazonaws.com/mindbowser.com-content/wp-content/uploads/sites/10/2024/04/04042307/download.png"
+      alt="Mindbowser Logo"
+    />
+
+    <ul class="slides">
+      <!-- Slide 1: Title -->
+      <li class="slide active">
+        <div class="accent-bar"></div>
+        <h1>AI in Software Development</h1>
+        <h3 style="color: var(--mb-orange); margin-bottom: 40px">
+          Empowering Mindbowser Engineers
+        </h3>
+        <div style="font-size: 1.3em; color: var(--mb-gray); margin-top: 32px">
+          <b>Unlocking Productivity &amp; Innovation</b>
+        </div>
+        <div class="footer">Mindbowser AI Session</div>
+      </li>
+      <!-- Slide 2: Agenda -->
+      <li class="slide">
+        <div class="accent-bar"></div>
+        <h2>Agenda</h2>
+        <ul class="icon-list">
+          <li>What is AI?</li>
+          <li>Why Use AI?</li>
+          <li>Where to Use AI</li>
+          <li>Where <span class="highlight">NOT</span> to Use AI</li>
+          <li>Best Practices</li>
+          <li>Q &amp; A</li>
+        </ul>
+        <div class="footer">AI for Software Developers | Mindbowser</div>
+      </li>
+      <!-- Slide 3: What is AI? -->
+      <li class="slide">
+        <div class="accent-bar"></div>
+        <h2>What is <span class="highlight">AI</span>?</h2>
+        <ul class="icon-list">
+          <li>
+            <b>Artificial Intelligence</b> = Machines that “think” or “learn”
+          </li>
+          <li>
+            Includes:
+            <span style="color: var(--mb-orange)">Machine Learning</span>, NLP,
+            Computer Vision, and more
+          </li>
+          <li>
+            Examples at Mindbowser:
+            <ul>
+              <li>Chatbots (e.g., ChatGPT, support bots)</li>
+              <li>Code Assistants (e.g., Copilot)</li>
+              <li>Recommendation Systems</li>
+            </ul>
+          </li>
+        </ul>
+        <div class="footer">What is AI?</div>
+      </li>
+      <!-- Slide 4: Why Use AI? -->
+      <li class="slide">
+        <div class="accent-bar"></div>
+        <h2>Why Use <span class="highlight">AI</span>?</h2>
+        <ul class="icon-list">
+          <li><b>Boost Productivity</b> (code gen, debugging, reviews)</li>
+          <li><b>Automate Repetitive Tasks</b></li>
+          <li><b>Accelerate Problem Solving</b></li>
+          <li><b>Enhance Quality & Consistency</b></li>
+          <li><b>Innovate New Features for Clients</b></li>
+        </ul>
+        <div class="footer">Why AI Matters at Mindbowser</div>
+      </li>
+      <!-- Slide 5: Where to Use AI -->
+      <li class="slide">
+        <div class="accent-bar"></div>
+        <h2>Where Should We Use <span class="highlight">AI</span>?</h2>
+        <ul class="icon-list">
+          <li>
+            <b>Code Assistance:</b> Autocomplete, code suggestions, refactoring
+          </li>
+          <li><b>Testing:</b> Generate unit tests, detect bugs</li>
+          <li><b>Documentation:</b> Summarize functions, generate API docs</li>
+          <li><b>Data Analysis:</b> Pattern discovery, report automation</li>
+          <li><b>DevOps:</b> Log monitoring, anomaly detection</li>
+          <li><b>Customer Support:</b> AI-powered chatbots, ticket triage</li>
+        </ul>
+        <div class="footer">Where to Use AI | Mindbowser</div>
+      </li>
+      <!-- Slide 6: Where Not to Use AI -->
+      <li class="slide slide-important">
+        <div class="accent-bar"></div>
+        <h2>Where <span style="color: var(--mb-red)">NOT</span> to Use AI</h2>
+        <ul class="icon-list">
+          <li>
+            <b>Sensitive Code:</b> Proprietary algorithms, security modules
+          </li>
+          <li>
+            <b>Critical Decisions:</b> Safety, legal, or compliance processes
+          </li>
+          <li><b>Unverified Outputs:</b> Always review AI code</li>
+          <li><b>Deep Context Requirements:</b> Complex business logic</li>
+          <li>
+            <b>Strict Data Privacy:</b> Never share confidential data with cloud
+            AI tools
+          </li>
+        </ul>
+        <div class="footer">Where Not to Use AI | Mindbowser</div>
+      </li>
+      <!-- Slide 7: Best Practices -->
+      <li class="slide">
+        <div class="accent-bar"></div>
+        <h2>Best Practices for Using <span class="highlight">AI</span></h2>
+        <ul class="icon-list">
+          <li><b>Always Review</b> AI Suggestions</li>
+          <li><b>Protect Data Privacy</b></li>
+          <li><b>Use AI as an Assistant, Not a Replacement</b></li>
+          <li><b>Stay Updated</b> on AI Policies</li>
+          <li><b>Share Learnings</b> with the Team!</li>
+        </ul>
+        <div class="footer">Best Practices | Mindbowser</div>
+      </li>
+      <!-- Slide 8: Getting Started -->
+      <li class="slide">
+        <div class="accent-bar"></div>
+        <h2>How to Get Started</h2>
+        <ul class="icon-list">
+          <li>Try AI code assistants (Copilot, ChatGPT, etc.)</li>
+          <li>Identify repetitive tasks in your workflow</li>
+          <li>Join AI learning sessions & communities</li>
+          <li>Share your experiences with Mindbowser team</li>
+        </ul>
+        <div class="footer">Getting Started | Mindbowser</div>
+      </li>
+      <!-- Slide: How to Frame a Prompt -->
+      <li class="slide" style="min-width: 60vw">
+        <div class="accent-bar"></div>
+        <h2>How to Frame an Effective Prompt</h2>
+        <ul class="icon-list">
+          <li>
+            <b>Define the Objective:</b>
+            Start by stating your goal or the task you want accomplished.<br />
+            <span style="color: var(--mb-gray); font-size: 0.95em"
+              >(e.g., “Create a responsive webpage with a user profile
+              card.”)</span
+            >
+          </li>
+          <li>
+            <b>Provide Relevant Context:</b>
+            Briefly describe the background or scenario to help the AI
+            understand the purpose.<br />
+            <span style="color: var(--mb-gray); font-size: 0.95em"
+              >Why is this task important? Who will use the output?</span
+            >
+          </li>
+          <li>
+            <b>Specify Inputs and Outputs:</b>
+            Clearly mention what information you’ll provide and what you expect
+            in return.<br />
+            <span style="color: var(--mb-gray); font-size: 0.95em"
+              >List required inputs, and describe the desired format of the
+              output.</span
+            >
+          </li>
+          <li>
+            <b>Add Constraints and Guidelines:</b>
+            Include any rules, performance limits, or style/design
+            requirements.<br />
+            <span style="color: var(--mb-gray); font-size: 0.95em"
+              >(e.g., “Use only HTML and CSS”, “Limit code to 100 lines”)</span
+            >
+          </li>
+          <li>
+            <b>Use Examples:</b>
+            Provide sample input and expected output to reduce ambiguity.<br />
+            <span style="color: var(--mb-gray); font-size: 0.95em"
+              >Examples help clarify complex requirements.</span
+            >
+          </li>
+          <li>
+            <b>Be Clear and Specific:</b>
+            Avoid vague language; test your prompt to ensure it delivers
+            accurate results.<br />
+            <span style="color: var(--mb-gray); font-size: 0.95em"
+              >Revise if needed for clarity and completeness.</span
+            >
+          </li>
+        </ul>
+        <div class="footer">Prompt Engineering | Mindbowser</div>
+      </li>
+      <!-- Slide 9: Q & A -->
+      <li class="slide">
+        <div class="accent-bar"></div>
+        <h2>Questions & Answers</h2>
+        <h3 style="color: var(--mb-orange); margin-top: 30px">
+          Let's discuss!
+        </h3>
+        <ul>
+          <li>Share your thoughts</li>
+          <li>Ask about Mindbowser use cases</li>
+        </ul>
+        <div class="footer">Q &amp; A | Mindbowser</div>
+      </li>
+      <!-- Slide 10: Thank you -->
+      <li class="slide">
+        <div class="accent-bar"></div>
+        <h2>Thank You!</h2>
+        <h3 style="color: var(--mb-blue)">
+          Let's use AI to build better software 🚀
+        </h3>
+        <div
+          style="margin-top: 24px; color: var(--mb-orange); font-size: 1.2em"
+        >
+          <b>Mindbowser Team</b>
+        </div>
+        <div class="footer">mindbowser.com</div>
+      </li>
+    </ul>
+    <div class="controls">
+      <button id="prevBtn">&larr; Prev</button>
+      <button id="nextBtn">Next &rarr;</button>
+    </div>
+    <script>
+      const slides = document.querySelectorAll(".slide");
+      let current = 0;
+      function showSlide(index) {
+        slides.forEach((s, i) => s.classList.toggle("active", i === index));
+      }
+      document.getElementById("prevBtn").onclick = function () {
+        if (current > 0) current--;
+        showSlide(current);
+      };
+      document.getElementById("nextBtn").onclick = function () {
+        if (current < slides.length - 1) current++;
+        showSlide(current);
+      };
+      // Keyboard navigation
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === " ") {
+          if (current < slides.length - 1) {
+            current++;
+            showSlide(current);
+          }
+        }
+        if (e.key === "ArrowLeft") {
+          if (current > 0) {
+            current--;
+            showSlide(current);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
